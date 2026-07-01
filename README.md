@@ -36,7 +36,41 @@ A modern cloud-based ERP platform inspired by Tally.
 - Node.js
 - Express.js
 - PostgreSQL
+- Prisma ORM
+- Supabase
 
 ## Status
 
-Project Planning Phase
+### Completed
+
+- Project Setup
+- GitHub Repository Setup
+- PostgreSQL Database Setup
+- Supabase Integration
+- Prisma ORM Configuration
+- Company Management Module
+  - Add Company
+  - View Company List
+  - Delete Company
+
+### In Progress
+
+- Customer Management Module
+
+### Upcoming
+
+- Inventory Management
+- Supplier Management
+- Sales Management
+- Purchase Management
+- Reports & Analytics
+- Role Based Access Control
+- Keyboard Navigation System
+- Dashboard Analytics
+
+## Author
+
+Jayesh Pitroda
+
+GitHub:
+https://github.com/JayPitroda13
