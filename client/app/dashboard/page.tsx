@@ -1,117 +1,126 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+interface DashboardStats {
+  companyCount: number;
+  customerCount: number;
+  inventoryCount: number;
+  totalSales: number;
+  totalPurchases: number;
+}
+
 export default function DashboardPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  const [stats, setStats] = useState<DashboardStats>({
+    companyCount: 0,
+    customerCount: 0,
+    inventoryCount: 0,
+    totalSales: 0,
+    totalPurchases: 0,
+  });
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  const fetchDashboardData = async () => {
+    const response = await fetch("/api/reports");
+    const data = await response.json();
+
+    if (data.success) {
+      setStats(data.stats);
+    }
+  };
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchDashboardData();
+    }
+  }, [status]);
+
+  if (status === "loading") {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
+
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">
-        Dashboard
-      </h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">
+          Dashboard
+        </h1>
 
-      <div className="grid grid-cols-4 gap-6 mb-8">
+        <button
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="bg-red-600 text-white px-4 py-2 rounded-lg"
+        >
+          Logout
+        </button>
+      </div>
+
+      <div className="grid grid-cols-5 gap-6 mb-8">
         <div className="bg-blue-600 text-white p-6 rounded-xl shadow-lg">
-          <h3 className="text-sm">Total Sales</h3>
+          <h3 className="text-sm">Companies</h3>
           <p className="text-3xl font-bold mt-2">
-            ₹1,25,000
+            {stats.companyCount}
           </p>
         </div>
 
         <div className="bg-green-600 text-white p-6 rounded-xl shadow-lg">
           <h3 className="text-sm">Customers</h3>
           <p className="text-3xl font-bold mt-2">
-            320
+            {stats.customerCount}
           </p>
         </div>
 
         <div className="bg-purple-600 text-white p-6 rounded-xl shadow-lg">
-          <h3 className="text-sm">Inventory Items</h3>
+          <h3 className="text-sm">Inventory</h3>
           <p className="text-3xl font-bold mt-2">
-            850
+            {stats.inventoryCount}
           </p>
         </div>
 
         <div className="bg-orange-500 text-white p-6 rounded-xl shadow-lg">
-          <h3 className="text-sm">Revenue</h3>
+          <h3 className="text-sm">Sales</h3>
           <p className="text-3xl font-bold mt-2">
-            ₹8,75,000
+            ₹{stats.totalSales}
+          </p>
+        </div>
+
+        <div className="bg-red-600 text-white p-6 rounded-xl shadow-lg">
+          <h3 className="text-sm">Purchases</h3>
+          <p className="text-3xl font-bold mt-2">
+            ₹{stats.totalPurchases}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Recent Sales
-          </h2>
+      <div className="bg-white rounded-xl shadow p-6">
+        <h2 className="text-xl font-semibold mb-4">
+          SmartERP Overview
+        </h2>
 
-          <div className="space-y-3">
-            <div className="flex justify-between border-b pb-2">
-              <span>INV-001</span>
-              <span>₹15,000</span>
-            </div>
+        <p>
+          Welcome to SmartERP. All business statistics shown
+          above are loaded live from the PostgreSQL database.
+        </p>
 
-            <div className="flex justify-between border-b pb-2">
-              <span>INV-002</span>
-              <span>₹22,000</span>
-            </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span>INV-003</span>
-              <span>₹8,500</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Recent Purchases
-          </h2>
-
-          <div className="space-y-3">
-            <div className="flex justify-between border-b pb-2">
-              <span>PO-001</span>
-              <span>₹12,000</span>
-            </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span>PO-002</span>
-              <span>₹18,500</span>
-            </div>
-
-            <div className="flex justify-between border-b pb-2">
-              <span>PO-003</span>
-              <span>₹9,000</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Low Stock Items
-          </h2>
-
-          <ul className="space-y-2">
-            <li>Printer Paper - 5 Left</li>
-            <li>USB Cable - 3 Left</li>
-            <li>Keyboard - 2 Left</li>
-          </ul>
-        </div>
-
-        <div className="bg-white rounded-xl shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            Quick Actions
-          </h2>
-
-          <div className="flex flex-wrap gap-3">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
-              Add Customer
-            </button>
-
-            <button className="bg-green-600 text-white px-4 py-2 rounded-lg">
-              Create Invoice
-            </button>
-
-            <button className="bg-purple-600 text-white px-4 py-2 rounded-lg">
-              Add Item
-            </button>
-          </div>
+        <div className="mt-4">
+          Logged in as: <strong>{session.user?.email}</strong>
         </div>
       </div>
     </div>
