@@ -40,6 +40,24 @@ interface Purchase {
   status: string;
 }
 
+interface Activity {
+  id: string;
+  module: string;
+  action: string;
+  description: string;
+  createdAt: string;
+}
+
+interface TopCustomer {
+  customer: string;
+  amount: number;
+}
+
+interface TopVendor {
+  vendor: string;
+  amount: number;
+}
+
 export default function ReportsPage() {
   const [stats, setStats] = useState<ReportStats>({
     companyCount: 0,
@@ -50,22 +68,41 @@ export default function ReportsPage() {
   });
 
   const [sales, setSales] = useState<Sale[]>([]);
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
+const [purchases, setPurchases] = useState<Purchase[]>([]);
+const [activities, setActivities] = useState<Activity[]>([]);
+
+const [topCustomers, setTopCustomers] =
+  useState<TopCustomer[]>([]);
+const [topVendors, setTopVendors] =
+  useState<TopVendor[]>([]);
 
   const fetchReports = async () => {
     const response = await fetch("/api/reports");
     const data = await response.json();
 
     if (data.success) {
-      setStats(data.stats);
-      setSales(data.sales);
-      setPurchases(data.purchases);
-    }
+  setStats(data.stats);
+  setSales(data.sales);
+  setPurchases(data.purchases);
+  setTopCustomers(data.topCustomers);
+  setTopVendors(data.topVendors);
+}
   };
 
+  const fetchActivities = async () => {
+  const response = await fetch("/api/activity");
+
+  const data = await response.json();
+
+  if (data.success) {
+    setActivities(data.activities);
+  }
+};
+
   useEffect(() => {
-    fetchReports();
-  }, []);
+  fetchReports();
+  fetchActivities();
+}, []);
 
   const downloadSalesPDF = () => {
     const doc = new jsPDF();
@@ -209,6 +246,40 @@ export default function ReportsPage() {
 const profit =
   stats.totalSales - stats.totalPurchases;
 
+const businessStatus =
+  profit > 0
+    ? "Profitable"
+    : profit < 0
+    ? "Loss"
+    : "Break Even";
+
+    const profitMargin =
+  stats.totalSales > 0
+    ? ((profit / stats.totalSales) * 100).toFixed(2)
+    : "0.00";
+
+  const healthScore = Math.min(
+  100,
+  Math.max(
+    0,
+    Math.round(Number(profitMargin) * 5)
+  )
+);
+const revenueEfficiency =
+  stats.totalPurchases > 0
+    ? (
+        stats.totalSales /
+        stats.totalPurchases
+      ).toFixed(2)
+    : "0.00";
+  
+const averageSaleValue =
+  sales.length > 0
+    ? Math.round(
+        stats.totalSales / sales.length
+      )
+    : 0;
+
   return (
     <main className="p-6">
       <h1 className="text-4xl font-bold mb-8">
@@ -347,15 +418,203 @@ const profit =
     Profit
   </h2>
 
-  <p className="text-3xl font-bold mt-3 text-green-600">
-    ₹{profit}
+  <p
+  className={`text-3xl font-bold mt-3 ${
+    profit > 0
+      ? "text-green-600"
+      : profit < 0
+      ? "text-red-600"
+      : "text-gray-600"
+  }`}
+>
+  ₹{profit}
+</p>
+
+</div>
+<div className="bg-white p-6 rounded-xl shadow border">
+  <h2 className="text-lg font-semibold">
+    Business Status
+  </h2>
+
+  <p
+    className={`text-3xl font-bold mt-3 ${
+      businessStatus === "Profitable"
+        ? "text-green-600"
+        : businessStatus === "Loss"
+        ? "text-red-600"
+        : "text-gray-600"
+    }`}
+  >
+    {businessStatus}
+  </p>
+</div>
+<div className="bg-white p-6 rounded-xl shadow border">
+  <h2 className="text-lg font-semibold">
+    Profit Margin
+  </h2>
+
+  <p
+    className={`text-3xl font-bold mt-3 ${
+      Number(profitMargin) > 20
+        ? "text-green-600"
+        : Number(profitMargin) > 10
+        ? "text-yellow-600"
+        : "text-red-600"
+    }`}
+  >
+    {profitMargin}%
+  </p>
+</div>
+
+<div className="bg-white p-6 rounded-xl shadow border">
+  <h2 className="text-lg font-semibold">
+    Health Score
+  </h2>
+
+  <p
+    className={`text-3xl font-bold mt-3 ${
+      healthScore >= 70
+        ? "text-green-600"
+        : healthScore >= 40
+        ? "text-yellow-600"
+        : "text-red-600"
+    }`}
+  >
+    {healthScore}/100
+  </p>
+</div>
+
+<div className="bg-white p-6 rounded-xl shadow border">
+  <h2 className="text-lg font-semibold">
+    Revenue Efficiency
+  </h2>
+
+  <p
+    className={`text-3xl font-bold mt-3 ${
+      Number(revenueEfficiency) >= 1.5
+        ? "text-green-600"
+        : Number(revenueEfficiency) >= 1
+        ? "text-yellow-600"
+        : "text-red-600"
+    }`}
+  >
+    {revenueEfficiency}x
+  </p>
+</div>
+
+<div className="bg-white p-6 rounded-xl shadow border">
+  <h2 className="text-lg font-semibold">
+    Average Sale Value
+  </h2>
+
+  <p className="text-3xl font-bold mt-3 text-blue-600">
+    ₹{averageSaleValue}
   </p>
 </div>
 
 </div>
 
+    <div className="bg-white rounded-xl shadow border p-6 mb-8">
+ <div className="flex items-center justify-between mb-4">
+  <h2 className="text-2xl font-bold">
+    Recent Activity
+  </h2>
+
+  <button
+    className="text-blue-600 hover:text-blue-800 font-medium"
+  >
+    View All
+  </button>
+</div>
+
+  <div className="space-y-3">
+    {activities.length === 0 ? (
+      <p className="text-gray-500">
+        No activity found
+      </p>
+    ) : (
+      activities.map((activity) => (
+        <div
+          key={activity.id}
+          className="border rounded-lg p-4"
+        >
+         <div className="flex justify-between items-center">
+  <p className="font-semibold">
+    {activity.module} • {activity.action}
+  </p>
+
+  <p className="text-xs text-gray-500">
+    {new Date(activity.createdAt).toLocaleString()}
+  </p>
+</div>
+
+          <p className="text-gray-600 text-sm mt-1">
+            {activity.description}
+          </p>
+        </div>
+      ))
+    )}
+  </div>
+</div>
     
-    
+    <div className="bg-white rounded-xl shadow border p-6 mb-8">
+  <h2 className="text-2xl font-bold mb-4">
+    Top Customers
+  </h2>
+
+  {topCustomers.length === 0 ? (
+    <p className="text-gray-500">
+      No customer sales data available
+    </p>
+  ) : (
+    <div className="space-y-3">
+      {topCustomers.map((customer, index) => (
+        <div
+          key={customer.customer}
+          className="flex justify-between items-center border rounded-lg p-4"
+        >
+          <p className="font-semibold">
+            #{index + 1} {customer.customer}
+          </p>
+
+          <p className="font-bold text-green-600">
+            ₹{customer.amount}
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+      
+<div className="bg-white rounded-xl shadow border p-6 mb-8">
+  <h2 className="text-2xl font-bold mb-4">
+    Top Vendors
+  </h2>
+
+  {topVendors.length === 0 ? (
+    <p className="text-gray-500">
+      No purchase data available
+    </p>
+  ) : (
+    <div className="space-y-3">
+      {topVendors.map((vendor, index) => (
+        <div
+          key={vendor.vendor}
+          className="flex justify-between items-center border rounded-lg p-4"
+        >
+          <p className="font-semibold">
+            #{index + 1} {vendor.vendor}
+          </p>
+
+          <p className="font-bold text-blue-600">
+            ₹{vendor.amount}
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
       <div className="bg-white rounded-xl shadow border p-6 mb-8">
         <h2 className="text-2xl font-bold mb-4">
           Recent Sales

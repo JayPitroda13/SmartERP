@@ -11,19 +11,19 @@ datasource db {
 model Company {
   id        String   @id @default(cuid())
   name      String
-  gstNumber String?
-  email     String?
-  phone     String?
   address   String?
   createdAt DateTime @default(now())
+  email     String?
+  phone     String?
   updatedAt DateTime @updatedAt
+  gstNumber String?
 }
 
 model Customer {
   id        String   @id @default(cuid())
   name      String
-  email     String?
   phone     String?
+  email     String?
   gstNumber String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -50,11 +50,11 @@ model Sales {
 
 model Purchase {
   id        String   @id @default(cuid())
-  poNumber  String   @unique
   vendor    String
   amount    Float
   status    String
   createdAt DateTime @default(now())
+  poNumber  String   @unique
 }
 
 model User {
@@ -63,4 +63,12 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  module      String
+  action      String
+  description String
+  createdAt   DateTime @default(now())
 }

@@ -22,18 +22,70 @@ export async function GET() {
       take: 5,
     });
 
-    const totalSales = sales.reduce(
+    const allSales = await prisma.sales.findMany();
+
+    const allPurchases = await prisma.purchase.findMany();
+
+    const recentActivities = await prisma.activity.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5,
+    });
+
+    const customerTotals = allSales.reduce(
+      (acc: Record<string, number>, sale) => {
+        acc[sale.customer] =
+          (acc[sale.customer] || 0) + sale.amount;
+
+        return acc;
+      },
+      {}
+    );
+
+    const topCustomers = Object.entries(customerTotals)
+      .map(([customer, amount]) => ({
+        customer,
+        amount,
+      }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 5);
+
+    const vendorTotals = allPurchases.reduce(
+      (
+        acc: Record<string, number>,
+        purchase
+      ) => {
+        acc[purchase.vendor] =
+          (acc[purchase.vendor] || 0) +
+          purchase.amount;
+
+        return acc;
+      },
+      {}
+    );
+
+    const topVendors = Object.entries(vendorTotals)
+      .map(([vendor, amount]) => ({
+        vendor,
+        amount,
+      }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 5);
+
+    const totalSales = allSales.reduce(
       (sum, sale) => sum + sale.amount,
       0
     );
 
-    const totalPurchases = purchases.reduce(
+    const totalPurchases = allPurchases.reduce(
       (sum, purchase) => sum + purchase.amount,
       0
     );
 
     return Response.json({
       success: true,
+
       stats: {
         companyCount,
         customerCount,
@@ -41,8 +93,14 @@ export async function GET() {
         totalSales,
         totalPurchases,
       },
+
       sales,
       purchases,
+
+      topCustomers,
+      topVendors,
+
+      recentActivities,
     });
   } catch (error) {
     console.error(error);

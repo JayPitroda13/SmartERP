@@ -39,6 +39,14 @@ interface Purchase {
   status: string;
 }
 
+interface Activity {
+  id: string;
+  module: string;
+  action: string;
+  description: string;
+  createdAt: string;
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -52,7 +60,16 @@ export default function DashboardPage() {
   });
 
   const [sales, setSales] = useState<Sale[]>([]);
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
+const [purchases, setPurchases] = useState<Purchase[]>([]);
+const [activities, setActivities] = useState<Activity[]>([]);
+
+const [topCustomers, setTopCustomers] = useState<
+  { customer: string; amount: number }[]
+>([]);
+
+const [topVendors, setTopVendors] = useState<
+  { vendor: string; amount: number }[]
+>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -65,10 +82,14 @@ export default function DashboardPage() {
     const data = await response.json();
 
     if (data.success) {
-      setStats(data.stats);
-      setSales(data.sales || []);
-      setPurchases(data.purchases || []);
-    }
+  setStats(data.stats);
+  setSales(data.sales || []);
+  setPurchases(data.purchases || []);
+  setActivities(data.recentActivities || []);
+
+  setTopCustomers(data.topCustomers || []);
+  setTopVendors(data.topVendors || []);
+}
   };
 
   useEffect(() => {
@@ -253,6 +274,92 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      <div className="bg-white rounded-xl shadow p-6 mb-8">
+  <h2 className="text-xl font-semibold mb-4">
+    Recent Activities
+  </h2>
+
+  {activities.length === 0 ? (
+    <p>No activities available.</p>
+  ) : (
+    <div className="space-y-3">
+      {activities.map((activity) => (
+        <div
+          key={activity.id}
+          className="border-b pb-3"
+        >
+          <div className="font-semibold">
+            {activity.module} • {activity.action}
+          </div>
+
+          <div className="text-sm text-gray-600">
+            {activity.description}
+          </div>
+
+          <div className="text-xs text-gray-400">
+            {new Date(
+              activity.createdAt
+            ).toLocaleString()}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
+<div className="grid grid-cols-2 gap-6 mb-8">
+  <div className="bg-white rounded-xl shadow p-6">
+    <h2 className="text-xl font-semibold mb-4">
+      Top Customers
+    </h2>
+
+    {topCustomers.length === 0 ? (
+      <p>No customer data available.</p>
+    ) : (
+      <div className="space-y-3">
+        {topCustomers.map((customer, index) => (
+          <div
+            key={index}
+            className="flex justify-between border-b pb-2"
+          >
+            <span>{customer.customer}</span>
+
+            <span className="font-bold text-green-600">
+              ₹{customer.amount}
+            </span>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <div className="bg-white rounded-xl shadow p-6">
+    <h2 className="text-xl font-semibold mb-4">
+      Top Vendors
+    </h2>
+
+    {topVendors.length === 0 ? (
+      <p>No vendor data available.</p>
+    ) : (
+      <div className="space-y-3">
+        {topVendors.map((vendor, index) => (
+          <div
+            key={index}
+            className="flex justify-between border-b pb-2"
+          >
+            <span>{vendor.vendor}</span>
+
+            <span className="font-bold text-red-600">
+              ₹{vendor.amount}
+            </span>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
+
 
       <div className="bg-white rounded-xl shadow p-6">
         <h2 className="text-xl font-semibold mb-4">

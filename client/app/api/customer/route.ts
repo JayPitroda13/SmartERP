@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma";
+import { logActivity } from "../../lib/activity";
 
 export async function GET() {
   try {
@@ -38,6 +39,12 @@ export async function POST(req: Request) {
       },
     });
 
+    await logActivity(
+      "Customer",
+      "Created",
+      `Customer ${customer.name} created`
+    );
+
     return Response.json({
       success: true,
       customer,
@@ -72,6 +79,12 @@ export async function PUT(req: Request) {
       },
     });
 
+    await logActivity(
+      "Customer",
+      "Updated",
+      `Customer ${customer.name} updated`
+    );
+
     return Response.json({
       success: true,
       customer,
@@ -94,11 +107,25 @@ export async function DELETE(req: Request) {
   try {
     const { id } = await req.json();
 
+    const customer = await prisma.customer.findUnique({
+      where: {
+        id,
+      },
+    });
+
     await prisma.customer.delete({
       where: {
         id,
       },
     });
+
+    if (customer) {
+      await logActivity(
+        "Customer",
+        "Deleted",
+        `Customer ${customer.name} deleted`
+      );
+    }
 
     return Response.json({
       success: true,

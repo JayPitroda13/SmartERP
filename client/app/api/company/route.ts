@@ -39,6 +39,14 @@ export async function POST(req: Request) {
       },
     });
 
+    await prisma.activity.create({
+      data: {
+        module: "Company",
+        action: "Created",
+        description: `${company.name} created`,
+      },
+    });
+
     return Response.json({
       success: true,
       company,
@@ -74,6 +82,14 @@ export async function PUT(req: Request) {
       },
     });
 
+    await prisma.activity.create({
+      data: {
+        module: "Company",
+        action: "Updated",
+        description: `${company.name} updated`,
+      },
+    });
+
     return Response.json({
       success: true,
       company,
@@ -96,9 +112,23 @@ export async function DELETE(req: Request) {
   try {
     const { id } = await req.json();
 
+    const company = await prisma.company.findUnique({
+      where: {
+        id,
+      },
+    });
+
     await prisma.company.delete({
       where: {
         id,
+      },
+    });
+
+    await prisma.activity.create({
+      data: {
+        module: "Company",
+        action: "Deleted",
+        description: `${company?.name} deleted`,
       },
     });
 
