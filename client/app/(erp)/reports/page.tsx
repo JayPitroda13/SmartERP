@@ -3,6 +3,18 @@
 import { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
+
 
 interface ReportStats {
   companyCount: number;
@@ -120,8 +132,80 @@ export default function ReportsPage() {
     doc.text(`Inventory Items: ${stats.inventoryCount}`, 14, 60);
     doc.text(`Total Sales: Rs. ${stats.totalSales}`, 14, 70);
     doc.text(`Total Purchases: Rs. ${stats.totalPurchases}`, 14, 80);
+
     doc.save("SmartERP-Full-Report.pdf");
   };
+
+  const downloadSalesExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(sales);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Sales"
+    );
+
+    XLSX.writeFile(workbook, "Sales-Report.xlsx");
+  };
+
+  const downloadPurchaseExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(purchases);
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Purchases"
+    );
+
+    XLSX.writeFile(workbook, "Purchase-Report.xlsx");
+  };
+
+  const downloadFullExcel = () => {
+    const workbook = XLSX.utils.book_new();
+
+    const summarySheet = XLSX.utils.json_to_sheet([
+      {
+        Companies: stats.companyCount,
+        Customers: stats.customerCount,
+        Inventory: stats.inventoryCount,
+        TotalSales: stats.totalSales,
+        TotalPurchases: stats.totalPurchases,
+      },
+    ]);
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      summarySheet,
+      "Summary"
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet(sales),
+      "Sales"
+    );
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet(purchases),
+      "Purchases"
+    );
+
+    XLSX.writeFile(
+      workbook,
+      "SmartERP-Full-Report.xlsx"
+    );
+  };
+  const chartData = [
+  {
+    name: "Business",
+    Sales: stats.totalSales,
+    Purchases: stats.totalPurchases,
+  },
+];
 
   return (
     <main className="p-6">
@@ -129,39 +213,100 @@ export default function ReportsPage() {
         Reports Dashboard
       </h1>
 
-      <div className="flex gap-4 mb-8">
+      <div className="flex flex-wrap gap-4 mb-8">
         <button
           onClick={downloadSalesPDF}
           className="bg-blue-600 text-white px-5 py-3 rounded-lg"
         >
-          Download Sales PDF
+          Sales PDF
         </button>
 
         <button
           onClick={downloadPurchasePDF}
           className="bg-green-600 text-white px-5 py-3 rounded-lg"
         >
-          Download Purchase PDF
+          Purchase PDF
         </button>
 
         <button
           onClick={downloadFullReportPDF}
           className="bg-purple-600 text-white px-5 py-3 rounded-lg"
         >
-          Download Full Report PDF
+          Full PDF
+        </button>
+
+        <button
+          onClick={downloadSalesExcel}
+          className="bg-cyan-600 text-white px-5 py-3 rounded-lg"
+        >
+          Sales Excel
+        </button>
+
+        <button
+          onClick={downloadPurchaseExcel}
+          className="bg-emerald-600 text-white px-5 py-3 rounded-lg"
+        >
+          Purchase Excel
+        </button>
+
+        <button
+          onClick={downloadFullExcel}
+          className="bg-indigo-600 text-white px-5 py-3 rounded-lg"
+        >
+          Full Excel
         </button>
       </div>
+      <div className="bg-white rounded-xl shadow border p-6 mb-8">
+  <h2 className="text-2xl font-bold mb-6">
+    Sales vs Purchases Analytics
+  </h2>
+
+  <div className="h-96">
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+    >
+      <BarChart data={chartData}>
+        <CartesianGrid strokeDasharray="3 3" />
+
+        <XAxis dataKey="name" />
+
+        <YAxis />
+
+        <Tooltip />
+
+        <Legend />
+
+        <Bar
+          dataKey="Sales"
+          fill="#f97316"
+          radius={[6, 6, 0, 0]}
+        />
+
+        <Bar
+          dataKey="Purchases"
+          fill="#dc2626"
+          radius={[6, 6, 0, 0]}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+</div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl shadow border">
-          <h2 className="text-lg font-semibold">Companies</h2>
+          <h2 className="text-lg font-semibold">
+            Companies
+          </h2>
           <p className="text-3xl font-bold mt-3">
             {stats.companyCount}
           </p>
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow border">
-          <h2 className="text-lg font-semibold">Customers</h2>
+          <h2 className="text-lg font-semibold">
+            Customers
+          </h2>
           <p className="text-3xl font-bold mt-3">
             {stats.customerCount}
           </p>
@@ -177,7 +322,9 @@ export default function ReportsPage() {
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow border">
-          <h2 className="text-lg font-semibold">Total Sales</h2>
+          <h2 className="text-lg font-semibold">
+            Total Sales
+          </h2>
           <p className="text-3xl font-bold mt-3">
             ₹{stats.totalSales}
           </p>
@@ -211,10 +358,18 @@ export default function ReportsPage() {
           <tbody>
             {sales.map((sale) => (
               <tr key={sale.id}>
-                <td className="border p-3">{sale.invoiceNo}</td>
-                <td className="border p-3">{sale.customer}</td>
-                <td className="border p-3">₹{sale.amount}</td>
-                <td className="border p-3">{sale.status}</td>
+                <td className="border p-3">
+                  {sale.invoiceNo}
+                </td>
+                <td className="border p-3">
+                  {sale.customer}
+                </td>
+                <td className="border p-3">
+                  ₹{sale.amount}
+                </td>
+                <td className="border p-3">
+                  {sale.status}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -258,4 +413,4 @@ export default function ReportsPage() {
       </div>
     </main>
   );
-}
+} 
