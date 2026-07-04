@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
+
 interface DashboardStats {
   companyCount: number;
   customerCount: number;
@@ -57,6 +68,14 @@ export default function DashboardPage() {
     return null;
   }
 
+  const chartData = [
+    {
+      name: "Business",
+      Sales: stats.totalSales,
+      Purchases: stats.totalPurchases,
+    },
+  ];
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -65,7 +84,11 @@ export default function DashboardPage() {
         </h1>
 
         <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() =>
+            signOut({
+              callbackUrl: "/login",
+            })
+          }
           className="bg-red-600 text-white px-4 py-2 rounded-lg"
         >
           Logout
@@ -109,6 +132,43 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      <div className="bg-white rounded-xl shadow p-6 mb-8">
+        <h2 className="text-xl font-semibold mb-6">
+          Sales vs Purchases
+        </h2>
+
+        <div className="h-96">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+          >
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+
+              <XAxis dataKey="name" />
+
+              <YAxis />
+
+              <Tooltip />
+
+              <Legend />
+
+              <Bar
+                dataKey="Sales"
+                fill="#f97316"
+                radius={[6, 6, 0, 0]}
+              />
+
+              <Bar
+                dataKey="Purchases"
+                fill="#dc2626"
+                radius={[6, 6, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
       <div className="bg-white rounded-xl shadow p-6">
         <h2 className="text-xl font-semibold mb-4">
           SmartERP Overview
@@ -120,7 +180,11 @@ export default function DashboardPage() {
         </p>
 
         <div className="mt-4">
-          Logged in as: <strong>{session.user?.email}</strong>
+          Logged in as:
+          <strong>
+            {" "}
+            {session.user?.email}
+          </strong>
         </div>
       </div>
     </div>
