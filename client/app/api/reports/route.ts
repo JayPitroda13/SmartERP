@@ -12,12 +12,14 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
+      take: 5,
     });
 
     const purchases = await prisma.purchase.findMany({
       orderBy: {
         createdAt: "desc",
       },
+      take: 5,
     });
 
     const totalSales = sales.reduce(

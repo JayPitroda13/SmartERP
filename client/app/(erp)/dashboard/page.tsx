@@ -23,6 +23,22 @@ interface DashboardStats {
   totalPurchases: number;
 }
 
+interface Sale {
+  id: string;
+  invoiceNo: string;
+  customer: string;
+  amount: number;
+  status: string;
+}
+
+interface Purchase {
+  id: string;
+  poNumber: string;
+  vendor: string;
+  amount: number;
+  status: string;
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -34,6 +50,9 @@ export default function DashboardPage() {
     totalSales: 0,
     totalPurchases: 0,
   });
+
+  const [sales, setSales] = useState<Sale[]>([]);
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -47,6 +66,8 @@ export default function DashboardPage() {
 
     if (data.success) {
       setStats(data.stats);
+      setSales(data.sales || []);
+      setPurchases(data.purchases || []);
     }
   };
 
@@ -166,6 +187,70 @@ export default function DashboardPage() {
               />
             </BarChart>
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-6 mb-8">
+        <div className="bg-white rounded-xl shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            Recent Sales
+          </h2>
+
+          {sales.length === 0 ? (
+            <p>No sales available.</p>
+          ) : (
+            <div className="space-y-3">
+              {sales.map((sale) => (
+                <div
+                  key={sale.id}
+                  className="border-b pb-2"
+                >
+                  <div className="font-semibold">
+                    {sale.invoiceNo}
+                  </div>
+
+                  <div className="text-sm text-gray-600">
+                    {sale.customer}
+                  </div>
+
+                  <div className="text-orange-600 font-bold">
+                    ₹{sale.amount}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white rounded-xl shadow p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            Recent Purchases
+          </h2>
+
+          {purchases.length === 0 ? (
+            <p>No purchases available.</p>
+          ) : (
+            <div className="space-y-3">
+              {purchases.map((purchase) => (
+                <div
+                  key={purchase.id}
+                  className="border-b pb-2"
+                >
+                  <div className="font-semibold">
+                    {purchase.poNumber}
+                  </div>
+
+                  <div className="text-sm text-gray-600">
+                    {purchase.vendor}
+                  </div>
+
+                  <div className="text-red-600 font-bold">
+                    ₹{purchase.amount}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
