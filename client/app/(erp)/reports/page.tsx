@@ -206,6 +206,8 @@ export default function ReportsPage() {
     Purchases: stats.totalPurchases,
   },
 ];
+const profit =
+  stats.totalSales - stats.totalPurchases;
 
   return (
     <main className="p-6">
@@ -293,7 +295,7 @@ export default function ReportsPage() {
   </div>
 </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl shadow border">
           <h2 className="text-lg font-semibold">
             Companies
@@ -331,15 +333,29 @@ export default function ReportsPage() {
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow border">
-          <h2 className="text-lg font-semibold">
-            Total Purchases
-          </h2>
-          <p className="text-3xl font-bold mt-3">
-            ₹{stats.totalPurchases}
-          </p>
-        </div>
-      </div>
+  <h2 className="text-lg font-semibold">
+    Total Purchases
+  </h2>
 
+  <p className="text-3xl font-bold mt-3">
+    ₹{stats.totalPurchases}
+  </p>
+</div>
+
+<div className="bg-white p-6 rounded-xl shadow border">
+  <h2 className="text-lg font-semibold">
+    Profit
+  </h2>
+
+  <p className="text-3xl font-bold mt-3 text-green-600">
+    ₹{profit}
+  </p>
+</div>
+
+</div>
+
+    
+    
       <div className="bg-white rounded-xl shadow border p-6 mb-8">
         <h2 className="text-2xl font-bold mb-4">
           Recent Sales
