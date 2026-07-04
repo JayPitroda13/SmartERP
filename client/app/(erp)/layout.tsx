@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import Sidebar from "../layouts/sidebar";
 import Header from "../layouts/header";
+import CommandPalette from "../components/CommandPalette";
 
 export default function ERPLayout({
   children,
@@ -80,6 +81,8 @@ export default function ERPLayout({
 
   return (
     <div className="flex">
+      <CommandPalette />
+
       <Sidebar />
 
       <div className="flex-1">
