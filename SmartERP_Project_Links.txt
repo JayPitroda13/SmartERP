@@ -1,0 +1,3 @@
+Live URL : https://smart-erp-kappa.vercel.app/
+GitHub Repository: https://github.com/JayPitroda13/SmartERP
+Supabase Project: https://supabase.com/dashboard/org/abhkvsfuqyxeoveobiwp
