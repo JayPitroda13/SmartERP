@@ -114,7 +114,7 @@ export default function ActivityPage() {
         <p className="text-gray-500">
           Loading activities...
         </p>
-      ) : activities.length === 0 ? (
+      ) : filteredActivities.length === 0 ? (
         <p className="text-gray-500">
           No activity found
         </p>

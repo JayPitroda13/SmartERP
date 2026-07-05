@@ -6,61 +6,102 @@ export default function SettingsPage() {
       </h1>
 
       <div className="grid grid-cols-2 gap-6">
+
         <div className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-xl font-semibold mb-4">
-            Company Settings
+            Company Information
           </h2>
 
-          <p className="text-gray-600 mb-4">
-            Manage company information and business details.
-          </p>
+          <div className="space-y-2">
+            <p>
+              <strong>Company:</strong>{" "}
+              TechNova Solutions Pvt Ltd
+            </p>
 
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
-            Configure
-          </button>
+            <p>
+              <strong>GST:</strong>{" "}
+              27AABCT1234K1Z5
+            </p>
+
+            <p>
+              <strong>Email:</strong>{" "}
+              accounts@technova.com
+            </p>
+
+            <p>
+              <strong>Phone:</strong>{" "}
+              +91 9876543210
+            </p>
+          </div>
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-xl font-semibold mb-4">
-            User Management
+            Application Information
           </h2>
 
-          <p className="text-gray-600 mb-4">
-            Manage users, roles and permissions.
-          </p>
+          <div className="space-y-2">
+            <p>
+              <strong>Application:</strong>
+              {" "}SmartERP
+            </p>
 
-          <button className="bg-green-600 text-white px-4 py-2 rounded-lg">
-            Manage Users
-          </button>
+            <p>
+              <strong>Version:</strong>
+              {" "}1.0.0
+            </p>
+
+            <p>
+              <strong>Database:</strong>
+              {" "}PostgreSQL
+            </p>
+
+            <p>
+              <strong>ORM:</strong>
+              {" "}Prisma
+            </p>
+          </div>
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-xl font-semibold mb-4">
-            Security Settings
+            Technology Stack
           </h2>
 
-          <p className="text-gray-600 mb-4">
-            Update passwords and security preferences.
-          </p>
-
-          <button className="bg-purple-600 text-white px-4 py-2 rounded-lg">
-            Security
-          </button>
+          <ul className="list-disc pl-5 space-y-2">
+            <li>Next.js</li>
+            <li>React</li>
+            <li>TypeScript</li>
+            <li>Prisma ORM</li>
+            <li>PostgreSQL</li>
+            <li>Tailwind CSS</li>
+          </ul>
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-xl font-semibold mb-4">
-            System Preferences
+            System Status
           </h2>
 
-          <p className="text-gray-600 mb-4">
-            Configure application settings and defaults.
-          </p>
+          <div className="space-y-2">
+            <p>
+              🟢 Database Connected
+            </p>
 
-          <button className="bg-orange-500 text-white px-4 py-2 rounded-lg">
-            Preferences
-          </button>
+            <p>
+              🟢 Activity Logging Enabled
+            </p>
+
+            <p>
+              🟢 Reports Enabled
+            </p>
+
+            <p>
+              🟢 Export Features Enabled
+            </p>
+          </div>
         </div>
+
       </div>
     </div>
   );

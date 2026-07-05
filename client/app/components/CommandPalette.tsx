@@ -10,15 +10,16 @@ export default function CommandPalette() {
   const [search, setSearch] = useState("");
 
   const menus = [
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "Company", path: "/company" },
-    { name: "Customer", path: "/customer" },
-    { name: "Inventory", path: "/inventory" },
-    { name: "Sales", path: "/sales" },
-    { name: "Purchase", path: "/purchase" },
-    { name: "Reports", path: "/reports" },
-    { name: "Settings", path: "/settings" },
-  ];
+  { name: "Dashboard", path: "/dashboard" },
+  { name: "Company", path: "/company" },
+  { name: "Customer", path: "/customer" },
+  { name: "Inventory", path: "/inventory" },
+  { name: "Sales", path: "/sales" },
+  { name: "Purchase", path: "/purchase" },
+  { name: "Reports", path: "/reports" },
+  { name: "Activity", path: "/activity" },
+  { name: "Settings", path: "/settings" },
+];
 
   useEffect(() => {
     const handleKeyDown = (

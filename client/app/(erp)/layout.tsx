@@ -56,6 +56,11 @@ export default function ERPLayout({
           router.push("/reports");
           break;
 
+        case "g":
+          event.preventDefault();
+          router.push("/activity");
+          break;
+
         case "t":
           event.preventDefault();
           router.push("/settings");

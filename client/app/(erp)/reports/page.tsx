@@ -89,13 +89,15 @@ const [topVendors, setTopVendors] =
 }
   };
 
-  const fetchActivities = async () => {
+ const fetchActivities = async () => {
   const response = await fetch("/api/activity");
 
   const data = await response.json();
 
   if (data.success) {
-    setActivities(data.activities);
+    setActivities(
+      data.activities.slice(0, 5)
+    );
   }
 };
 
@@ -521,10 +523,13 @@ const averageSaleValue =
   </h2>
 
   <button
-    className="text-blue-600 hover:text-blue-800 font-medium"
-  >
-    View All
-  </button>
+  onClick={() =>
+    window.location.href = "/activity"
+  }
+  className="text-blue-600 hover:text-blue-800 font-medium"
+>
+  View All
+</button>
 </div>
 
   <div className="space-y-3">

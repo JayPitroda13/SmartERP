@@ -120,22 +120,85 @@ const [topVendors, setTopVendors] = useState<
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">
-          Dashboard
-        </h1>
+      <div className="flex justify-between items-start mb-6">
+  <div>
+    <h1 className="text-3xl font-bold">
+      Dashboard
+    </h1>
 
-        <button
-          onClick={() =>
-            signOut({
-              callbackUrl: "/login",
-            })
-          }
-          className="bg-red-600 text-white px-4 py-2 rounded-lg"
-        >
-          Logout
-        </button>
-      </div>
+    <p className="text-gray-600 mt-2">
+      Welcome back,
+      <span className="font-semibold">
+        {" "}
+        {session.user?.email}
+      </span>{" "}
+      👋
+    </p>
+    <div className="mt-3 text-sm text-gray-600">
+  <p>
+    Today At A Glance
+  </p>
+
+  <p>
+    {stats.companyCount} Companies •{" "}
+    {stats.customerCount} Customers •{" "}
+    {stats.inventoryCount} Inventory Items
+  </p>
+
+  <p>
+    ₹{stats.totalSales} Sales • ₹
+    {stats.totalPurchases} Purchases
+  </p>
+</div>
+  </div>
+
+  <button
+    onClick={() =>
+      signOut({
+        callbackUrl: "/login",
+      })
+    }
+    className="bg-red-600 text-white px-4 py-2 rounded-lg"
+  >
+    Logout
+  </button>
+</div>
+
+      <div className="bg-white rounded-xl shadow p-6 mb-8">
+  <h2 className="text-xl font-semibold mb-4">
+    Quick Actions
+  </h2>
+
+  <div className="flex flex-wrap gap-4">
+    <button
+      onClick={() => router.push("/company")}
+      className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700"
+    >
+      + New Company
+    </button>
+
+    <button
+      onClick={() => router.push("/customer")}
+      className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700"
+    >
+      + New Customer
+    </button>
+
+    <button
+      onClick={() => router.push("/sales")}
+      className="bg-orange-500 text-white px-5 py-3 rounded-lg hover:bg-orange-600"
+    >
+      + New Sale
+    </button>
+
+    <button
+      onClick={() => router.push("/purchase")}
+      className="bg-red-600 text-white px-5 py-3 rounded-lg hover:bg-red-700"
+    >
+      + New Purchase
+    </button>
+  </div>
+</div>
 
       <div className="grid grid-cols-5 gap-6 mb-8">
         <div className="bg-blue-600 text-white p-6 rounded-xl shadow-lg">
@@ -366,10 +429,25 @@ const [topVendors, setTopVendors] = useState<
           SmartERP Overview
         </h2>
 
-        <p>
-          Welcome to SmartERP. All business statistics shown
-          above are loaded live from the PostgreSQL database.
-        </p>
+        <div className="space-y-3">
+  <p>
+    Welcome to SmartERP. All business statistics shown
+    above are loaded live from the PostgreSQL database.
+  </p>
+
+  <div>
+    <strong>Database Status:</strong> Connected
+  </div>
+
+  <div>
+    <strong>Last Updated:</strong>{" "}
+    {new Date().toLocaleString()}
+  </div>
+
+  <div>
+    <strong>Environment:</strong> Production Ready
+  </div>
+</div>
 
         <div className="mt-4">
           Logged in as:

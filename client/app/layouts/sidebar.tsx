@@ -7,15 +7,16 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   const menus = [
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "Company", path: "/company" },
-    { name: "Customer", path: "/customer" },
-    { name: "Inventory", path: "/inventory" },
-    { name: "Sales", path: "/sales" },
-    { name: "Purchase", path: "/purchase" },
-    { name: "Reports", path: "/reports" },
-    { name: "Settings", path: "/settings" },
-  ];
+  { name: "Dashboard", path: "/dashboard" },
+  { name: "Company", path: "/company" },
+  { name: "Customer", path: "/customer" },
+  { name: "Inventory", path: "/inventory" },
+  { name: "Sales", path: "/sales" },
+  { name: "Purchase", path: "/purchase" },
+  { name: "Reports", path: "/reports" },
+  { name: "Activity", path: "/activity" },
+  { name: "Settings", path: "/settings" },
+];
 
   return (
     <aside className="w-64 h-screen bg-slate-950 text-white p-5">
